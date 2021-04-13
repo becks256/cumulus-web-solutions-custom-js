@@ -1,82 +1,71 @@
-class Collection {
-    constructor() {
-        this.records = [];
-        this.totalCards = 0;
-        this.setRecord = (obj) => {
-            this.records.push(obj)
-        }
-    }
-}
-
-const collection = new Collection();
+let currentCount = 0;
 
 function showFieldName() {
+    recordCards = document.getElementsByClassName('record-metadata')
+    if ((recordCards.length - currentCount > 20)) {
+        currentCount = 0
+    }
+    if (recordCards.length > currentCount) {
+        currentCount = recordCards.length
+        const fieldNames = [
+            "Date Created",
+            "Status",
+            "Customer Name",
+            "Sample Status",
+            "Exclusive",
+            "Exclusivity Customer",
+            "eComm Customer Usage"
+        ]
 
-    const recordCards = document.getElementsByClassName('record-metadata')
-    const fieldNames = [
-        "Date Created",
-        "Status",
-        "Customer Name",
-        "Sample Status",
-        "Exclusive",
-        "Exclusivity Customer",
-        "eComm Customer Usage"
-    ]
-
-    if (collection.totalCards < recordCards.length) {
-        collection.totalCards = recordCards.length
-
-        for (var card in recordCards) {
-            let obj = []
-            for (let child in recordCards[card].children) {
-                //console.log(recordCards[card].children[child])
-                let e = recordCards[card].children[child]
-                if (typeof e === 'object' && e.classList.contains('record-description')) {
-                    obj.push({element: e, processed: false, key: card})
+        //let records = []
+        //console.log(recordCards)
+        for (let card of recordCards) {
+            let childIndex = 0
+            for (let child of card.children) {
+                if(!child.getAttribute('processed')) {
+                    child.setAttribute('processed', true)
                 }
-            }
-            if (obj.length > 0) {
-                collection.setRecord(obj)
-            }
-        }
-    
-        for (let group in collection.records) {
-            //console.log(collection.records[group])
-            if (collection.records[group].length > 0) {
-                //console.log(collection.records[group])
-                for (let item in collection.records[group]) {
-                    let e = collection.records[group][item]
-                    //console.log(e)
-                    if (e && e.processed === false) {
-                        e.processed = true
-                        if (e.element.innerText.match(/:\s/g)) {
-                            e.element.innerText = e.element.innerText.split(': ')[1]
-                        }
-                        //console.log(e)
-                        e.element.innerHTML = e.element.innerText.match(/-$/i) ? `<span style="font-weight: 700">${fieldNames[item]}: </span>n/a` : `<span style="font-weight: 700">${fieldNames[item]}: </span>${e.element.innerText}`
-                        //e.innerText = null
-                        item % 2 == 0 ? e.element.style.backgroundColor = "#dddddd" : null
-                        e.element.style.color = "rgb(50,50,50)"
-                        e.element.style.borderRadius = "5px"
-                        e.element.style.paddingLeft = "10px"
+                else {
+                    break
+                }
+                //console.log(child)
+                if (child.classList.contains('record-description')) {
+                    //console.log(child.innerHTML)
+                    if (child.innerText.match(/:\s/g)) {
+                        child.innerText = child.innerText.split(': ')[1]
                     }
+                    if (child.innerText.match(/-$/i)) {
+                        child.innerHTML = `<span style="font-weight: 700">${fieldNames[childIndex]}: </span>n/a` 
+                    }
+                    else {
+                        child.innerHTML = `<span style="font-weight: 700">${fieldNames[childIndex]}: </span>${child.innerText}`
+                    }
+                    
+                    childIndex % 2 == 0 ? child.style.backgroundColor = "#dddddd" : null
+                    child.style.color = "rgb(50,50,50)"
+                    child.style.borderRadius = "5px"
+                    child.style.paddingLeft = "10px"
+                    childIndex++
+                    //console.log(childIndex)
                 }
             }
         }
     }
-
 }
 
-document.querySelector('#search-content').addEventListener('wheel', () => {
-    let i = setInterval(() => {
-        //console.log("updating fieldName")
+document.querySelectorAll('#content, #search-content, #library-content, #collectionbasket-content, #upload-content').forEach(element => {
+    console.log('im wheelin!')
+    element.addEventListener('wheel', (event) => {
         showFieldName()
-    }, 500);
-
-    setTimeout(() => {
-        window.clearInterval(i)
-    }, 2000)
+    })
+    element.addEventListener('readystatechange', (event) => {
+        showFieldName()
+    })
+    element.addEventListener('scroll', (event) => {
+        showFieldName()
+    })
 })
+
 document.addEventListener('readystatechange', () => {
     console.log(document.readyState)
     if (document.readyState == "complete") {
