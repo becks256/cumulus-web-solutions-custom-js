@@ -143,83 +143,83 @@ const renderFieldNames = () => {
     }
 }
 
-function rafAsync() {
-    return new Promise(resolve => {
-        requestAnimationFrame(resolve); //faster than set time out
-    });
-}
+// function rafAsync() {
+//     return new Promise(resolve => {
+//         requestAnimationFrame(resolve); //faster than set time out
+//     });
+// }
 
-function checkElement(selector) {
-    if (document.querySelector(selector) === null) {
-        return rafAsync().then(() => checkElement(selector));
-    } else {
-        return Promise.resolve(true);
-    }
-}
-let currentCount = 0;
-checkElement('.record-items') //use whichever selector you want
-.then((element) => {
-     console.log(element);
-     const obsvr = new MutationObserver((mutations) => {
-         mutations.forEach(mutation => {
-            let recordCards = document.getElementsByClassName('record-metadata')
-            if ((recordCards.length - currentCount > 20)) {
-                currentCount = 0
-            }
-            if (recordCards.length > currentCount) {
-                //console.log(currentCount)
-                currentCount = recordCards.length
-                const fieldNames = [
-                    "Date Created",
-                    "Status",
-                    "Customer Name",
-                    "Sample Status",
-                    "Exclusive",
-                    "Exclusivity Customer",
-                    "eComm Customer Usage"
-                ]
+// function checkElement(selector) {
+//     if (document.querySelector(selector) === null) {
+//         return rafAsync().then(() => checkElement(selector));
+//     } else {
+//         return Promise.resolve(true);
+//     }
+// }
+// checkElement('.record-items') //use whichever selector you want
+// .then((element) => {
+//     let currentCount = 0;
+//      console.log(element);
+//      const obsvr = new MutationObserver((mutations) => {
+//          mutations.forEach(mutation => {
+//             let recordCards = document.getElementsByClassName('record-metadata')
+//             if ((recordCards.length - currentCount > 20)) {
+//                 currentCount = 0
+//             }
+//             if (recordCards.length > currentCount) {
+//                 //console.log(currentCount)
+//                 currentCount = recordCards.length
+//                 const fieldNames = [
+//                     "Date Created",
+//                     "Status",
+//                     "Customer Name",
+//                     "Sample Status",
+//                     "Exclusive",
+//                     "Exclusivity Customer",
+//                     "eComm Customer Usage"
+//                 ]
             
-                //let records = []
-                //console.log(recordCards)
-                for (let card of recordCards) {
-                    let childIndex = 0
-                    for (let child of card.children) {
-                        if(!child.getAttribute('processed')) {
-                            child.setAttribute('processed', true)
-                        }
-                        else {
-                            break
-                        }
-                        //console.log(child)
-                        if (child.classList.contains('record-description')) {
-                            //console.log(child.innerHTML)
-                            if (child.innerText.match(/:\s/g)) {
-                               child.innerText = child.innerText.split(': ')[1]
-                            }
-                            if (child.innerText.match(/-$/i)) {
-                                child.innerHTML = `<span style="font-weight: 700">${fieldNames[childIndex]}: </span>n/a` 
-                            }
-                            else {
-                                child.innerHTML = `<span style="font-weight: 700">${fieldNames[childIndex]}: </span>${child.innerText}`
-                            }
+//                 //let records = []
+//                 //console.log(recordCards)
+//                 for (let card of recordCards) {
+//                     let childIndex = 0
+//                     for (let child of card.children) {
+//                         if(!child.getAttribute('processed')) {
+//                             child.setAttribute('processed', true)
+//                         }
+//                         else {
+//                             break
+//                         }
+//                         //console.log(child)
+//                         if (child.classList.contains('record-description')) {
+//                             //console.log(child.innerHTML)
+//                             if (child.innerText.match(/:\s/g)) {
+//                                child.innerText = child.innerText.split(': ')[1]
+//                             }
+//                             if (child.innerText.match(/-$/i)) {
+//                                 child.innerHTML = `<span style="font-weight: 700">${fieldNames[childIndex]}: </span>n/a` 
+//                             }
+//                             else {
+//                                 child.innerHTML = `<span style="font-weight: 700">${fieldNames[childIndex]}: </span>${child.innerText}`
+//                             }
                             
-                            childIndex % 2 == 0 ? child.style.backgroundColor = "#dddddd" : null
-                            child.style.color = "rgb(50,50,50)"
-                            child.style.borderRadius = "5px"
-                            child.style.paddingLeft = "10px"
-                            childIndex++
-                            //console.log(childIndex)
-                        }
-                    }
-                }
-            }
-        })
-     })
-     obsvr.observe(document.querySelector('.record-items'), {
-         subtree: false,
-         childList: true
-     })
-})
+//                             childIndex % 2 == 0 ? child.style.backgroundColor = "#dddddd" : null
+//                             child.style.color = "rgb(50,50,50)"
+//                             child.style.borderRadius = "5px"
+//                             child.style.paddingLeft = "10px"
+//                             childIndex++
+//                             //console.log(childIndex)
+//                         }
+//                     }
+//                 }
+//             }
+//         })
+//      })
+//      obsvr.observe(document.querySelector('.record-items'), {
+//          subtree: true,
+//          childList: true
+//      })
+// })
 
    
     const targetNode = document.querySelector('#search-content') 
@@ -289,11 +289,11 @@ checkElement('.record-items') //use whichever selector you want
         })
     });
 
-    // observer.observe(targetNode, {
-    //     subtree: false,
-    //     childList: true, 
-    //     attributes: true,
-    //     attributeOldValue: true
-    //     //attributeFilter: [""]
+    observer.observe(targetNode, {
+        subtree: false,
+        childList: true, 
+        attributes: true,
+        attributeOldValue: true
+        //attributeFilter: [""]
 
-    // });
+    });
